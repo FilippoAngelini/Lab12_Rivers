@@ -7,9 +7,9 @@ package it.polito.tdp.rivers;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import it.polito.tdp.rivers.db.RiversDAO;
 import it.polito.tdp.rivers.model.InfoRiver;
 import it.polito.tdp.rivers.model.Model;
+import it.polito.tdp.rivers.model.Risultato;
 import it.polito.tdp.rivers.model.River;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -52,6 +52,9 @@ public class RiversController {
     @FXML // fx:id="txtResult"
     private TextArea txtResult; // Value injected by FXMLLoader
     
+    InfoRiver info;
+    River river;
+    
     public void setModel(Model model){
     	this.model = model;
     	boxRiver.getItems().addAll(this.model.getAllRivers());
@@ -59,6 +62,20 @@ public class RiversController {
 
     @FXML
     void doSimula(ActionEvent event) {
+    	
+    	if(boxRiver.getValue()==null){
+    		txtResult.setText("Selezionare un fiume");
+    		return;
+    	}
+    	
+    	if(!txtK.getText().matches("[0-9]")){
+    		txtResult.setText("Inserire un fattore di scala k");
+    		return;
+		}
+    	
+    	Risultato ris = this.model.doSimula(Float.parseFloat(txtK.getText()), boxRiver.getValue());
+    	
+    	txtResult.setText(ris.toString());
 
     }
 

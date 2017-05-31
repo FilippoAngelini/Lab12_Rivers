@@ -63,8 +63,35 @@ public class RiversDAO {
 		return flows;
 	}
 	
+	public List<Flow> getAllFlowsForRiver(River river) {
+		final String sql = "SELECT id, day, flow, river FROM flow WHERE river = ?";
+
+		List<Flow> flows = new LinkedList<Flow>();
+
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			
+			st.setInt(1, river.getId());
+			
+			ResultSet res = st.executeQuery();
+
+			while (res.next()) {
+				flows.add(new Flow(res.getDate("day").toLocalDate(), res.getDouble("flow"),river));
+			}
+
+			conn.close();
+
+		} catch (SQLException e) {
+			// e.printStackTrace();
+			throw new RuntimeException();
+		}
+
+		return flows;
+	}
+	
 	public InfoRiver getInfoPerFiume(River river){
-		final String sql = "SELECT * FROM flow WHERE river=?";
+		/*final String sql = "SELECT * FROM flow WHERE river=?";
 
 		InfoRiver info;
 
@@ -91,6 +118,29 @@ public class RiversDAO {
 				ultima = res.getDate("day").toLocalDate();
 			
 			info = new InfoRiver (prima, ultima, cont, flow);
+
+			conn.close();
+
+		} catch (SQLException e) {
+			// e.printStackTrace();
+			throw new RuntimeException();
+		}
+
+		return info;*/
+		
+		final String sql = "SELECT min(day) as prima, max(day) as ultima, count(*) as cont, avg(flow) as fmed FROM flow WHERE river=? order by day asc";
+
+		InfoRiver info = null;
+
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, river.getId());
+			ResultSet res = st.executeQuery();
+
+			if (res.next()) {
+				info = new InfoRiver(res.getDate("prima").toLocalDate(),res.getDate("ultima").toLocalDate(),res.getInt("cont"),res.getFloat("fmed"));
+			}
 
 			conn.close();
 

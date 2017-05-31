@@ -2,7 +2,7 @@ package it.polito.tdp.rivers.model;
 
 import java.time.LocalDate;
 
-public class Flow {
+public class Flow implements Comparable<Flow>{
 
 	private LocalDate day;
 	private double flow;
@@ -29,10 +29,29 @@ public class Flow {
 	public void setFlow(double flow) {
 		this.flow = flow;
 	}
+	
+	
+
+	public River getRiver() {
+		return river;
+	}
+
+	public void setRiver(River river) {
+		this.river = river;
+	}
 
 	@Override
 	public String toString() {
 		return "Flow [day=" + day + ", flow=" + flow + ", river=" + river + "]";
 	}
 
+	@Override
+	public int compareTo(Flow altro) {
+		if(this.day.isBefore(altro.getDay()))
+			return -1;
+		else
+			return 1;
+	}
+
+	
 }
